@@ -1,0 +1,68 @@
+import random
+
+def cost(state):
+    c = 0
+    n = len(state)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if abs(state[i] - state[j]) == abs(i - j):
+                c += 1
+
+    return c
+
+def hill_climbing(n):
+    state = list(range(n))
+    random.shuffle(state)
+
+    while True:
+        current_cost = cost(state)
+
+        if current_cost == 0:
+            return state
+
+        neighbors = []
+
+        for i in range(n):
+            for j in range(i + 1, n):
+                new_state = state.copy()
+                new_state[i], new_state[j] = new_state[j], new_state[i]
+                neighbors.append(new_state)
+
+        best = min(neighbors, key=cost)
+
+        if cost(best) >= current_cost:
+            state = list(range(n))
+            random.shuffle(state)
+        else:
+            state = best
+
+def display(state):
+    n = len(state)
+
+    for i in range(n):
+        row = ""
+        for j in range(n):
+            if state[j] == i:
+                row += "Q "
+            else:
+                row += ". "
+        print(row)
+
+n = int(input("Enter number of queens: "))
+solution = hill_climbing(n)
+
+print("Solution:")
+display(solution)
+print("Cost:", cost(solution))
+
+
+
+Output:
+Enter number of queens: 4
+Solution:
+. Q . . 
+. . . Q 
+Q . . . 
+. . Q . 
+Cost: 0

@@ -1,0 +1,92 @@
+def display(state):
+    for i in range(0, 9, 3):
+        print(state[i:i + 3])
+    print()
+
+
+def get_neighbors(state):
+    neighbors = []
+    zero = state.index(0)
+    row, col = divmod(zero, 3)
+
+    moves = [
+        (-1, 0),  
+        (1, 0),   
+        (0, -1),  
+        (0, 1)   
+    ]
+
+    for dr, dc in moves:
+        nr, nc = row + dr, col + dc
+
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            new_pos = nr * 3 + nc
+            new_state = list(state)
+
+            new_state[zero], new_state[new_pos] = (
+                new_state[new_pos], new_state[zero]
+            )
+
+            neighbors.append(tuple(new_state))
+
+    return neighbors
+
+
+def dfs(start, goal, max_depth=30):
+    stack = [(start, [start])]
+    visited = {start}
+
+    while stack:
+        state, path = stack.pop()
+
+        if state == goal:
+            return path
+
+        if len(path) - 1 >= max_depth:
+            continue
+
+        for neighbor in reversed(get_neighbors(state)):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                stack.append((neighbor, path + [neighbor]))
+
+    return None
+
+
+initial = (1, 2, 3,
+           4, 0, 6,
+           7, 5, 8)
+
+goal = (1, 2, 3,
+        4, 5, 6,
+        7, 8, 0)
+
+print("Initial State:")
+display(initial)
+
+print("Goal State:")
+display(goal)
+
+solution = dfs(initial, goal)
+
+if solution:
+    print("Solution found using DFS!")
+    print("Number of moves:", len(solution) - 1)
+else:
+    print("No solution found within the depth limit.")
+
+
+
+Output:
+Initial State:
+(1, 2, 3)
+(4, 0, 6)
+(7, 5, 8)
+
+Goal State:
+(1, 2, 3)
+(4, 5, 6)
+(7, 8, 0)
+
+Solution found using DFS!
+Number of moves: 2
